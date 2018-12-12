@@ -1,27 +1,14 @@
 const express = require('express')
 const ws = require('ws')
 
-const app = express()
 const PORT = 8080
 
-const wss = new ws.Server({port: PORT+1})
+const wss = new ws.Server({ port: PORT })
 
-const files = []
-
-app.get('/', (request, response) => {
-    response.send(files)
-})
-
-app.listen(PORT, () => {
-    console.log(`Tracker web server listening on ${PORT}`) 
-})
+const clients = []
 
 function handleMessage(message) {
-    try {
-        JSON.parse(message)        
-    } catch (e) {
-        console.error(e)
-    }    
+    const message = message.split(':')
 }
 
 function handleError(error) {
@@ -32,9 +19,17 @@ function handleClose(ws) {
     console.error(ws)
 }
 
+function sendHeader(ws) {
+    const header = `P2P Tracker :: v0.0.1\n`
+    ws.send(header)
+}
+
 wss.on('connection', (ws, req) => {
     console.log('Client connected', req.connection.remoteAddress)
+    sendHeader(ws)
     ws.on('message', handleMessage)
     ws.on('error', handleError)
     ws.on('close', handleClose)
 })
+
+console.log(`P2P Tracker listening on ${PORT}`)

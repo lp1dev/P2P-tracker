@@ -1,7 +1,7 @@
 const express = require('express')
 const ws = require('ws')
 
-const PORT = 8080
+const PORT = 8086
 
 const wss = new ws.Server({ port: PORT })
 
